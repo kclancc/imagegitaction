@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: 517716713836.dkr.ecr.us-east-1.amazonaws.com/kclancy-images
+  ECR_REPOSITORY: ${{ secrets.REPO }}
 
 permissions:
   contents: read

@@ -8,6 +8,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  LOCAL_REPO: test_image
+  LOCAL_TAG: latest
   ECR_REPOSITORY: ${{ secrets.REPO }}
 
 permissions:
@@ -36,11 +38,8 @@ jobs:
 
     - name: Build
       id: build
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t $LOCAL_REPO:$LOCAL_TAG .
 
     - name: CrowdStrike Container Image Scan
       uses: crowdstrike/container-image-scan-action@v1.1.0
@@ -48,8 +47,8 @@ jobs:
         FALCON_CLIENT_ID: "${{ secrets.FALCON_CLIENT_ID }}"
         FALCON_CLIENT_SECRET: "${{ secrets.FALCON_CLIENT_SECRET }}"
         FALCON_CLOUD_REGION: "{{ secrets.FALCON_CLOUD_REGION }}"
-        CONTAINER_REPO: ${{ steps.login-ecr.outputs.registry }}
-        CONTAINER_TAG: ${{ github.sha }}
+        CONTAINER_REPO: $LOCAL_REPO
+        CONTAINER_TAG: $LOCAL_TAG
 
     - name: Build, tag, and push image to Amazon ECR
       id: push-image

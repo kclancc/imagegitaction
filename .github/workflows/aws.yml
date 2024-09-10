@@ -49,6 +49,7 @@ jobs:
         FALCON_CLOUD_REGION: "{{ secrets.FALCON_CLOUD_REGION }}"
         CONTAINER_REPO: test_image
         CONTAINER_TAG: latest
+        CROWDSTRIKE_SCORE: 100000
 
     - name: Build, tag, and push image to Amazon ECR
       id: push-image

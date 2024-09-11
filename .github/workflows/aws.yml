@@ -1,5 +1,4 @@
 
-
 name: Deploy to Amazon ECS
 
 on:
@@ -52,11 +51,6 @@ jobs:
         FALCON_CLOUD_REGION: "{{ secrets.FALCON_CLOUD_REGION }}"
         CONTAINER_REPO: test_image
         CONTAINER_TAG: latest
-
-    # - name: Print Image Scan Report
-    #   if: always()
-    #   run: |
-    #     jq '.' /tmp/output.json
     
     - name: Upload Scan Report
       uses: actions/upload-artifact@v4

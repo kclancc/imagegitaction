@@ -53,16 +53,17 @@ jobs:
         CONTAINER_REPO: test_image
         CONTAINER_TAG: latest
 
-    - name: Print Image Scan Report
-      if: always()
-      run: |
-        jq '.' /tmp/output.json
+    # - name: Print Image Scan Report
+    #   if: always()
+    #   run: |
+    #     jq '.' /tmp/output.json
     
     - name: Upload Scan Report
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: image_scan_output
-        path: output.json
+        path: /tmp/output.json
 
     - name: Build, tag, and push image to Amazon ECR
       id: push-image

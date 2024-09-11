@@ -81,7 +81,7 @@ jobs:
         RESPONSE=$(curl -s -X GET -H "authorization: Bearer ${CS_JWT}" \
         "https://container-upload.${YOUR_CLOUD}/policy-checks?policy_type=image-prevention-policy&repository=${REPOSITORY}&tag=${IMAGE_TAG}")
 
-        echo "Image Matches build fail policy?:" $($RESPONSE | jq '.resources[0].deny')
+        echo "Image Matches build fail policy?:" $(echo $RESPONSE | jq '.resources[0].deny')
 
         if [[ $(echo $RESPONSE | jq '.resources[0].deny') == true ]]; then
           exit 1

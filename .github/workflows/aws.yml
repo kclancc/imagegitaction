@@ -45,13 +45,18 @@ jobs:
       uses: crowdstrike/container-image-scan-action@v1.1.0
       with:
         crowdstrike_score: 5000
-        json_report: output.json
+        json_report: /tmp/output.json
       env:
         FALCON_CLIENT_ID: "${{ secrets.FALCON_CLIENT_ID }}"
         FALCON_CLIENT_SECRET: "${{ secrets.FALCON_CLIENT_SECRET }}"
         FALCON_CLOUD_REGION: "{{ secrets.FALCON_CLOUD_REGION }}"
         CONTAINER_REPO: test_image
         CONTAINER_TAG: latest
+
+    - name: Print Image Scan Report
+      if: always()
+      run: |
+        jq '.' /tmp/report.json
     
     - name: Upload Scan Report
       uses: actions/upload-artifact@v4

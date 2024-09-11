@@ -83,6 +83,10 @@ jobs:
 
         echo $RESPONSE | jq '.resources[0].deny'
 
+        if [[ $(echo $RESPONSE | jq '.resources[0].deny') == false ]]; then
+          exit 1
+        fi
+
     - name: Build, tag, and push image to Amazon ECR
       id: push-image
       env:

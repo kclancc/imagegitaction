@@ -59,6 +59,29 @@ jobs:
         name: image_scan_output
         path: /tmp/output.json
 
+      - name: Check CrowdStrike Policies
+        env:
+          FALCON_CLIENT_ID: "${{ secrets.FALCON_CLIENT_ID }}"
+          FALCON_CLIENT_SECRET: "${{ secrets.FALCON_CLIENT_SECRET }}"
+          FALCON_CLOUD_REGION: "{{ secrets.FALCON_CLOUD_REGION }}"
+          API_BASE_URL: https://api.crowdstrike.com
+          YOUR_CLOUD: us-1.crowdstrike.com
+          REPOSITORY: test_image
+          IMAGE_TAG: latest
+        run: |
+          RESPONSE=$(curl \
+          --header "Content-Type: application/x-www-form-urlencoded" \
+          --data "client_id=${FALCON_CLIENT_ID}&client_secret=${FALCON_CLIENT_SECRET}" \
+          --request POST \
+          --silent ${API_BASE_URL}/oauth2/token) 
+
+          CS_JWT=$(echo ${RESPONSE} | jq -r '.access_token')
+
+          RESPONSE=$(curl -s -X GET -H "authorization: Bearer ${CS_JWT}" \
+          "https://container-upload.${YOUR_CLOUD}/policy-checks?policy_type=image-prevention-policy&repository=${REPOSITORY}&tag=${IMAGE_TAG}")
+
+          echo $RESPONSE | jq '.resources[0].deny'
+
     - name: Build, tag, and push image to Amazon ECR
       id: push-image
       env:

@@ -1,4 +1,4 @@
-FROM python:3.9.20-alpine3.19
+FROM python:latest
 
 ADD . /app
 WORKDIR /app

@@ -98,13 +98,13 @@ jobs:
         REPOSITORY: test_image
         IMAGE_TAG: latest
       run: |
-        podman login \
+        docker login \
           --username ${FALCON_CLIENT_ID} \
           --password ${FALCON_CLIENT_SECRET} \
           container-upload.us-1.crowdstrike.com
 
-        podman tag test_image:latest container-upload.us-1.crowdstrike.com/test_image:latest
-        podman push container-upload.us-1.crowdstrike.com/test_image:latest
+        docker tag test_image:latest container-upload.us-1.crowdstrike.com/test_image:latest
+        docker push container-upload.us-1.crowdstrike.com/test_image:latest
 
     - name: Build, tag, and push image to Amazon ECR
       id: push-image

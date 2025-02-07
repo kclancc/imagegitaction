@@ -98,16 +98,30 @@ jobs:
         REPOSITORY: test_image
         IMAGE_TAG: latest
       run: |
+        
         podman pull ubuntu:latest
         podman login \
           --username ${FALCON_CLIENT_ID} \
           --password ${FALCON_CLIENT_SECRET} \
           container-upload.us-1.crowdstrike.com
-
+        
         podman tag ubuntu:latest container-upload.us-1.crowdstrike.com/ubuntu:latest
         # IMAGE_ID=$(docker images -q test_image:latest)
         podman push container-upload.us-1.crowdstrike.com/ubuntu:latest
 
+        RESPONSE=$(curl \
+        --header "Content-Type: application/x-www-form-urlencoded" \
+        --data "client_id=${FALCON_CLIENT_ID}&client_secret=${FALCON_CLIENT_SECRET}" \
+        --request POST \
+        --silent ${API_BASE_URL}/oauth2/token) 
+
+        CS_JWT=$(echo ${RESPONSE} | jq -r '.access_token')
+
+        curl \
+        --header "Authorization: Bearer ${CS_JWT}" \
+        --request GET "https://container-upload.us-1.crowdstrike.com/reports?repository=ubuntu&tag=latest"
+
+      
     - name: Build, tag, and push image to Amazon ECR
       id: push-image
       env:
